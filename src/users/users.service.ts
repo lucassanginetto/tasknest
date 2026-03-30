@@ -2,86 +2,90 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { FindUserDto } from './dto/find-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
-  private nextId: number = 1;
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+  ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const newUser = new User(
-      this.nextId,
-      createUserDto.username,
-      createUserDto.email,
-      createUserDto.password,
-    );
-
-    this.nextId++;
-    this.users.push(newUser);
-
-    return FindUserDto.fromUser(newUser);
-  }
-
-  findAll(): FindUserDto[] {
-    return this.users.map(FindUserDto.fromUser);
-  }
-
-  findOne(id: number): FindUserDto | undefined {
-    const user = this.users.find((user) => {
-      return user.id == id;
+  private async isUsernameAvailable(username: string): Promise<boolean> {
+    const userWithUsername = await this.usersRepository.findOne({
+      where: [{ username }],
     });
-
-    if (user === undefined) return undefined;
-
-    return FindUserDto.fromUser(user);
+    if (userWithUsername === null) return true;
+    return false;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): FindUserDto | undefined {
-    const userIndex = this.users.findIndex((user) => {
-      return user.id == id;
-    });
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<User | 'USERNAME_ALREADY_TAKEN'> {
+    if (!(await this.isUsernameAvailable(createUserDto.username))) {
+      return 'USERNAME_ALREADY_TAKEN';
+    }
 
-    if (userIndex == -1) return undefined;
+    const newUser = this.usersRepository.create();
+
+    newUser.username = createUserDto.username;
+    newUser.password = createUserDto.password;
+
+    return this.usersRepository.save(newUser);
+  }
+
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+
+  findOne(id: number): Promise<User | null> {
+    return this.usersRepository.findOneBy({ id });
+  }
+
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | 'USER_NOT_FOUND' | 'USERNAME_ALREADY_TAKEN'> {
+    const user = await this.findOne(id);
+    if (user === null) {
+      return 'USER_NOT_FOUND';
+    }
 
     if (updateUserDto.username !== undefined) {
-      this.users[userIndex].username = updateUserDto.username;
-    }
-    if (updateUserDto.email !== undefined) {
-      this.users[userIndex].email = updateUserDto.email;
+      if (!(await this.isUsernameAvailable(updateUserDto.username))) {
+        return 'USERNAME_ALREADY_TAKEN';
+      }
+      user.username = updateUserDto.username;
     }
     if (updateUserDto.password !== undefined) {
-      this.users[userIndex].password = updateUserDto.password;
+      user.password = updateUserDto.password;
     }
 
-    return FindUserDto.fromUser(this.users[userIndex]);
+    return this.usersRepository.save(user);
   }
 
-  replace(id: number, createUserDto: CreateUserDto): FindUserDto | undefined {
-    const userIndex = this.users.findIndex((user) => {
-      return user.id == id;
-    });
+  async replace(
+    id: number,
+    createUserDto: CreateUserDto,
+  ): Promise<User | 'USER_NOT_FOUND' | 'USERNAME_ALREADY_TAKEN'> {
+    if (!(await this.isUsernameAvailable(createUserDto.username))) {
+      return 'USERNAME_ALREADY_TAKEN';
+    }
 
-    if (userIndex == -1) return undefined;
+    const user = await this.findOne(id);
+    if (user === null) {
+      return 'USER_NOT_FOUND';
+    }
 
-    this.users[userIndex] = new User(
-      id,
-      createUserDto.username,
-      createUserDto.email,
-      createUserDto.password,
-    );
+    user.username = createUserDto.username;
+    user.password = createUserDto.password;
 
-    return FindUserDto.fromUser(this.users[userIndex]);
+    return this.usersRepository.save(user);
   }
 
-  remove(id: number): boolean {
-    const userIndex = this.users.findIndex((user) => {
-      return user.id == id;
-    });
-
-    if (userIndex == -1) return false;
-
-    this.users.splice(userIndex, 1);
+  async remove(id: number): Promise<boolean> {
+    if ((await this.findOne(id)) === null) return false;
+    await this.usersRepository.delete(id);
     return true;
   }
 }

@@ -1,8 +1,21 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+@Entity('users')
 export class User {
-  constructor(
-    public readonly id: number,
-    public username: string,
-    public email: string,
-    public password: string,
-  ) {}
+  @PrimaryGeneratedColumn()
+  public id: number;
+
+  @Column({ unique: true })
+  public username: string;
+
+  @Column()
+  public password: string;
+
+  @CreateDateColumn()
+  public createdAt: Date;
 }

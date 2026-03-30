@@ -25,62 +25,78 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(
+  async create(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
-    const newUser = this.usersService.create(createUserDto);
+  ): Promise<FindUserDto> {
+    const newUser = await this.usersService.create(createUserDto);
+
+    if (newUser === 'USERNAME_ALREADY_TAKEN')
+      throw new HttpException(
+        `Username ${createUserDto.username} already exists`,
+        HttpStatus.CONFLICT,
+      );
 
     res.header('Location', `/users/${newUser.id}`);
 
-    return newUser;
+    return FindUserDto.fromUser(newUser);
   }
 
   @Get()
-  findAll(): FindUserDto[] {
-    return this.usersService.findAll();
+  async findAll(): Promise<FindUserDto[]> {
+    return (await this.usersService.findAll()).map(FindUserDto.fromUser);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): FindUserDto {
-    const user = this.usersService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<FindUserDto> {
+    const user = await this.usersService.findOne(id);
 
-    if (user === undefined)
+    if (user === null)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-    return user;
+    return FindUserDto.fromUser(user);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  ): FindUserDto {
-    const user = this.usersService.update(id, updateUserDto);
+  ): Promise<FindUserDto> {
+    const user = await this.usersService.update(id, updateUserDto);
 
-    if (user === undefined)
+    if (user === 'USER_NOT_FOUND')
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (user === 'USERNAME_ALREADY_TAKEN')
+      throw new HttpException(
+        `Username ${updateUserDto.username} already exists`,
+        HttpStatus.CONFLICT,
+      );
 
-    return user;
+    return FindUserDto.fromUser(user);
   }
 
   @Put(':id')
-  replace(
+  async replace(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) createUserDto: CreateUserDto,
-  ): FindUserDto {
-    const user = this.usersService.replace(id, createUserDto);
+  ): Promise<FindUserDto> {
+    const user = await this.usersService.replace(id, createUserDto);
 
-    if (user === undefined)
+    if (user === 'USER_NOT_FOUND')
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (user === 'USERNAME_ALREADY_TAKEN')
+      throw new HttpException(
+        `Username ${createUserDto.username} already exists`,
+        HttpStatus.CONFLICT,
+      );
 
-    return user;
+    return FindUserDto.fromUser(user);
   }
 
   @Delete(':id')
-  @HttpCode(204)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    if (!this.usersService.remove(id))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    if (!(await this.usersService.remove(id)))
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 }
