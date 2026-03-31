@@ -13,12 +13,15 @@ import {
   HttpCode,
   Res,
   Put,
+  UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
+import { AuthGuard, JwtPayload, User } from '../auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -57,11 +60,15 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @User() jwtPayload: JwtPayload,
   ): Promise<FindUserDto> {
+    if (jwtPayload.sub !== id) throw new ForbiddenException();
+
     const user = await this.usersService.update(id, updateUserDto);
 
     if (user === 'USER_NOT_FOUND')
@@ -75,11 +82,15 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   async replace(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @User() jwtPayload: JwtPayload,
   ): Promise<FindUserDto> {
+    if (jwtPayload.sub !== id) throw new ForbiddenException();
+
     const user = await this.usersService.replace(id, createUserDto);
 
     if (user === 'USER_NOT_FOUND')
@@ -93,9 +104,15 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @User() jwtPayload: JwtPayload,
+  ) {
+    if (jwtPayload.sub !== id) throw new ForbiddenException();
+
     if (!(await this.usersService.remove(id)))
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
