@@ -7,7 +7,7 @@ services:
       POSTGRES_DB: ${DB_NAME:-test}
       PG_DATA: /data/postgres
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     restart: unless-stopped
     networks:
       - postgres
