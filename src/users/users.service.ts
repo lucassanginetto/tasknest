@@ -31,6 +31,7 @@ export class UsersService {
 
     newUser.username = createUserDto.username;
     newUser.password = await bcrypt.hash(createUserDto.password, 10);
+    newUser.tasks = [];
 
     return this.usersRepository.save(newUser);
   }
