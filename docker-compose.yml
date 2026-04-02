@@ -2,13 +2,31 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: ${DB_USER:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
-      POSTGRES_DB: ${DB_NAME:-test}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
       PG_DATA: /data/postgres
     ports:
       - "${DB_PORT}:5432"
     restart: unless-stopped
+    networks:
+      - postgres
+
+  tasknest:
+    image: tasknest
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_TOKEN_EXPIRE_MINUTES: ${JWT_TOKEN_EXPIRE_MINUTES}
     networks:
       - postgres
 
