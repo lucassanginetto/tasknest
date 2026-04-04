@@ -24,10 +24,12 @@ import { TasksModule } from './tasks/tasks.module';
         database: configService.get<string>('POSTGRES_DB'),
         autoLoadEntities: true,
         synchronize: true,
-        ssl: configService.get<string>('POSTGRES_SSL_CA') ? {
-          rejectUnauthorized: true,
-          ca: configService.get<string>('POSTGRES_SSL_CA')
-        } : undefined,
+        ssl: configService.get<string>('POSTGRES_SSL_CA')
+          ? {
+              rejectUnauthorized: true,
+              ca: configService.get<string>('POSTGRES_SSL_CA'),
+            }
+          : undefined,
       }),
     }),
     UsersModule,
@@ -37,4 +39,4 @@ import { TasksModule } from './tasks/tasks.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
