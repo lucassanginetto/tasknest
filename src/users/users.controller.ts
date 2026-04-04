@@ -22,6 +22,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
 import { AuthGuard, JwtPayload, User } from '../auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -60,6 +61,7 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
@@ -82,6 +84,7 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Put(':id')
   async replace(
@@ -104,6 +107,7 @@ export class UsersController {
     return FindUserDto.fromUser(user);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

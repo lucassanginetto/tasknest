@@ -13,6 +13,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard, JwtPayload, User } from './auth.guard';
 import { JwtTokenDto, SignInDto } from './auth.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +37,7 @@ export class AuthController {
     return jwtTokenDto;
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@User() jwtPayload: JwtPayload) {

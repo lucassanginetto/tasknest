@@ -20,11 +20,13 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { FindTaskDto } from './dto/find-task.dto';
 import { AuthGuard, JwtPayload, User } from 'src/auth/auth.guard';
 import type { Response } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   async create(
@@ -46,6 +48,7 @@ export class TasksController {
     return FindTaskDto.fromTask(newTask);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get()
   async findAll(@User() jwtPayload: JwtPayload): Promise<FindTaskDto[]> {
@@ -54,6 +57,7 @@ export class TasksController {
     );
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(
@@ -65,6 +69,7 @@ export class TasksController {
     return FindTaskDto.fromTask(task);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
@@ -81,6 +86,7 @@ export class TasksController {
     return FindTaskDto.fromTask(task);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(
