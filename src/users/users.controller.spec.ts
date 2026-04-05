@@ -1,15 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 describe('UsersController', () => {
   let controller: UsersController;
+
+  const mockUsersService = {};
+  const mockAuthGuard = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [UsersService],
-    }).compile();
+    })
+      .overrideProvider(UsersService)
+      .useValue(mockUsersService)
+      .overrideGuard(AuthGuard)
+      .useValue(mockAuthGuard)
+      .compile();
 
     controller = module.get<UsersController>(UsersController);
   });
