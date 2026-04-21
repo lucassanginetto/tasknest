@@ -3,7 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Task } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -34,6 +34,12 @@ export class TasksService {
 
   findAll(userId: number): Promise<Task[]> {
     return this.tasksRepository.find({ where: [{ user: { id: userId } }] });
+  }
+
+  findByStatus(userId: number, status: TaskStatus): Promise<Task[]> {
+    return this.tasksRepository.find({
+      where: [{ user: { id: userId }, status }],
+    });
   }
 
   findOne(id: number, userId: number): Promise<Task | null> {

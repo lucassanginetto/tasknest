@@ -13,6 +13,8 @@ import {
   ValidationPipe,
   NotFoundException,
   ParseIntPipe,
+  Query,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -20,7 +22,8 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { FindTaskDto } from './dto/find-task.dto';
 import { AuthGuard, JwtPayload, User } from 'src/auth/auth.guard';
 import type { Response } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { TaskStatus } from './entities/task.entity';
 
 @Controller('tasks')
 export class TasksController {
@@ -49,9 +52,19 @@ export class TasksController {
   }
 
   @ApiBearerAuth()
+  @ApiQuery({ name: 'status', enum: TaskStatus, required: false })
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@User() jwtPayload: JwtPayload): Promise<FindTaskDto[]> {
+  async findAll(
+    @Query('status', new ParseEnumPipe(TaskStatus, { optional: true }))
+    status: TaskStatus | undefined = undefined,
+    @User() jwtPayload: JwtPayload,
+  ): Promise<FindTaskDto[]> {
+    if (status !== undefined) {
+      return (await this.tasksService.findByStatus(jwtPayload.sub, status)).map(
+        FindTaskDto.fromTask,
+      );
+    }
     return (await this.tasksService.findAll(jwtPayload.sub)).map(
       FindTaskDto.fromTask,
     );
