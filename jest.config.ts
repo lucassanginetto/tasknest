@@ -10,14 +10,26 @@ const { config: tsconfig } = ts.readConfigFile(
 );
 const paths = tsconfig?.compilerOptions?.paths ?? {};
 
+// Nest v12 ships as ESM-only (no CommonJS build), so the suites have to run as
+// real ES modules. ts-jest would otherwise emit CJS (this project has no
+// "type": "module", since `nest build` targets CommonJS) and the resulting
+// `require()` of @nestjs/* fails.
 const config: Config = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
+  extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': ['ts-jest', { useESM: true, tsconfig: 'tsconfig.spec.json' }],
   },
-  moduleNameMapper: pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
+  moduleNameMapper: {
+    // Generated sources (e.g. the Prisma client) use ESM-style relative
+    // specifiers such as `./internal/class.js` that point at `.ts` files on
+    // disk. `nest build` emits real `.js` next to them, Jest does not.
+    // Anchored to relative specifiers so package imports are left untouched.
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    ...pathsToModuleNameMapper(paths, { prefix: '<rootDir>/' }),
+  },
   collectCoverageFrom: [
     'src/**/*.(t|j)s',
     'libs/**/*.(t|j)s',
