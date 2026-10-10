@@ -18,9 +18,13 @@ describe('AppController (e2e)', () => {
 
   it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/status')
       .expect(200)
-      .expect('Hello World!');
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect((res) => {
+        expect(Number.isNaN(Date.parse(res.body.currentTime))).toEqual(false)
+        expect(res.body.applicationStatus).toBe('Running')
+      });
   });
 
   afterEach(async () => {
