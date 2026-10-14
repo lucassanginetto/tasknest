@@ -4,8 +4,8 @@ Tasknest is a simple task tracking API.
 Users can create tasks and mark them as "to do", "in progress" or "done".
 Basic JWT authentication and authorization are employed so that a user can't access another user's tasks.
 
-A deploy can be found at <https://tasknest.vercel.app>.
-The API uses Swagger UI for automatic documentation, which can be accessed at the [`/swagger`](https://tasknest.vercel.app/swagger) endpoint.
+A deploy can be found at <https://tasknest-one-liard.vercel.app>.
+The API uses Swagger UI for automatic documentation, which can be accessed at the [`/swagger`](https://tasknest-one-liard.vercel.app/swagger) endpoint.
 
 ## Project setup
 
