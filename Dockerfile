@@ -1,19 +1,30 @@
-FROM ghcr.io/pnpm/pnpm:12 AS base
-RUN pnpm runtime set node 24 -g
-COPY . /app
+# Base
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/var/cache/pnpm \
-    pnpm install --store-dir /var/cache/pnpm --prod --frozen-lockfile
+# Install all dependencies (needed for build)
+FROM base AS install
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
+# Build
 FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/var/cache/pnpm \
-    pnpm install --store-dir /var/cache/pnpm --frozen-lockfile
-RUN pnpm run build
+COPY --from=install /app/node_modules node_modules
+COPY . .
+RUN bun run build
 
-FROM base
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/dist /app/dist
+# Install production dependencies only
+FROM base AS prod-deps
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile --production
+
+# Runtime
+FROM base AS release
+ENV NODE_ENV production
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY package.json ./
+
+USER bun
 EXPOSE 3000
-CMD [ "node", "dist/main" ]
+ENTRYPOINT [ "bun", "run", "dist/main.js" ]
