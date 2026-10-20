@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, Post, UnauthorizedException, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -11,7 +11,7 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Post('signup')
-  async signup(@Body(ValidationPipe) signupDto: SignupDto) {
+  async signup(@Body() signupDto: SignupDto) {
     const signupResult = await this.authService.signup(signupDto)
 
     if (signupResult.isErr()) {
@@ -21,7 +21,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body(ValidationPipe) loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto) {
     const loginResult = await this.authService.login(loginDto)
 
     if (loginResult.isErr()) {

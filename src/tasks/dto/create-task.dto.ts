@@ -1,13 +1,11 @@
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { createZodDto } from "nestjs-zod";
+import z from "zod";
 import { Status } from "../../prisma/generated/enums";
 
-export class CreateTaskDto {
-  @IsNotEmpty()
-  title: string
+export const createTaskSchema = z.object({
+  title: z.string().nonempty(),
+  description: z.string(),
+  status: z.enum(Status)
+})
 
-  @IsNotEmpty()
-  description: string
-
-  @IsEnum(Status)
-  status: Status
-}
+export class CreateTaskDto extends createZodDto(createTaskSchema) { }

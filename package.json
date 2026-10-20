@@ -37,9 +37,11 @@
     "dotenv": "^18.0.6",
     "dotenv-expand": "^1000.0.0",
     "fastify": "^5.12.5",
+    "nestjs-zod": "^5.5.0",
     "neverthrow": "^8.2.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@jest/globals": "^30.5.2",
