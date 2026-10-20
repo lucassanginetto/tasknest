@@ -5,6 +5,7 @@ import { App } from 'supertest/types';
 import { AuthModule } from '../src/auth/auth.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { jest } from '@jest/globals'
+import { ZodValidationPipe } from 'nestjs-zod';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;
@@ -32,7 +33,7 @@ describe('AuthController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication()
-    app.useGlobalPipes(new ValidationPipe())
+    app.useGlobalPipes(new ZodValidationPipe())
     await app.init();
   });
 
