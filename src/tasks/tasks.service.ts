@@ -37,7 +37,11 @@ export class TasksService {
       return ok(
         await this.prismaService.task.update({
           where: { userId, id },
-          data: { ...updateTaskDto }
+          data: {
+            title: updateTaskDto.title,
+            description: updateTaskDto.description,
+            status: updateTaskDto.status
+          }
         })
       )
     } catch (error) {
