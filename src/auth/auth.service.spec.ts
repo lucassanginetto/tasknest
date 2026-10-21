@@ -39,8 +39,8 @@ describe('AuthService', () => {
   }
 
   const mockBcryptService = {
-    hash: jest.fn(async (data: string | Buffer) => `hashed_${data}`),
-    compare: jest.fn(async (data: string | Buffer, encrypted: string) => encrypted === `hashed_${data}`),
+    hash: jest.fn(async (data: string) => `hashed_${data}`),
+    compare: jest.fn(async (data: string, encrypted: string) => encrypted === `hashed_${data}`),
   }
 
   beforeEach(async () => {
