@@ -5,9 +5,8 @@ import { err, ok } from 'neverthrow';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
-import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { LoginDto, SignupDto } from './auth.dto';
 
 describe('AuthController', () => {
   let controller: AuthController

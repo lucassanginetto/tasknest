@@ -3,14 +3,15 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { AuthGuard, JwtPayload } from './auth.guard';
-import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
+import { ZodResponse } from 'nestjs-zod';
+import { JwtResponseDto, LoginDto, SignupDto, UserResponseDto } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Post('signup')
+  @ZodResponse({ type: UserResponseDto })
   async signup(@Body() signupDto: SignupDto) {
     const signupResult = await this.authService.signup(signupDto)
 
@@ -21,6 +22,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @ZodResponse({ type: JwtResponseDto })
   async login(@Body() loginDto: LoginDto) {
     const loginResult = await this.authService.login(loginDto)
 

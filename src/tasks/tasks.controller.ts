@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Query, ParseEnumPipe, ParseIntPipe, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Query, ParseEnumPipe, ParseIntPipe, NotFoundException, InternalServerErrorException, HttpCode, HttpStatus } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard, JwtPayload } from '../auth/auth.guard';
 import type { FastifyReply as Reply } from 'fastify';
 import { Status } from '../prisma/generated/enums';
+import { CreateTaskDto, TaskResponseDto, UpdateTaskDto } from './tasks.dto';
+import { ZodResponse } from 'nestjs-zod';
 
 @Controller('tasks')
 export class TasksController {
@@ -14,6 +14,7 @@ export class TasksController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
+  @ZodResponse({ type: TaskResponseDto })
   async create(
     @Body() createTaskDto: CreateTaskDto,
     @JwtPayload() jwtPayload: { id: number },
@@ -28,6 +29,7 @@ export class TasksController {
   @ApiQuery({ name: 'status', enum: Status, required: false })
   @UseGuards(AuthGuard)
   @Get()
+  @ZodResponse({ type: [TaskResponseDto] })
   findAll(
     @Query('status', new ParseEnumPipe(Status, { optional: true })) status: Status | undefined,
     @JwtPayload() jwtPayload: { id: number },
@@ -41,6 +43,7 @@ export class TasksController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get(':id')
+  @ZodResponse({ type: TaskResponseDto })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @JwtPayload() jwtPayload: { id: number },
@@ -53,6 +56,7 @@ export class TasksController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
+  @ZodResponse({ type: TaskResponseDto })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
@@ -75,6 +79,7 @@ export class TasksController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @JwtPayload() jwtPayload: { id: number },

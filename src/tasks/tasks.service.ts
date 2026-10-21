@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Status } from '../prisma/generated/enums';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { err, ok } from 'neverthrow';
+import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
 
 @Injectable()
 export class TasksService {

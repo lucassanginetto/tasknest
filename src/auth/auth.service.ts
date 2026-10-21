@@ -3,9 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { err, ok } from 'neverthrow';
 
 import { PrismaService } from '../prisma/prisma.service';
-import { SignupDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
 import { BcryptService } from '../bcrypt/bcrypt.service';
+import { LoginDto, SignupDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
