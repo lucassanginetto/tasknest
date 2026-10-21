@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AuthModule } from '../src/auth/auth.module';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { jest } from '@jest/globals'
 import { ZodValidationPipe } from 'nestjs-zod';
+import { afterEach, beforeEach, describe, expect, it, jest } from 'bun:test';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication<App>;

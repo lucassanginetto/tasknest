@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { jest } from '@jest/globals';
 import { err, ok } from 'neverthrow';
+import { beforeEach, describe, expect, it, mock } from 'bun:test';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -12,7 +12,7 @@ describe('AuthController', () => {
   let controller: AuthController
 
   const mockAuthService = {
-    signup: jest.fn((dto: SignupDto) => {
+    signup: mock((dto: SignupDto) => {
       if (dto.email === 'alreadyexists@test.com') {
         return err('EMAIL_CONFLICT')
       }
@@ -23,7 +23,7 @@ describe('AuthController', () => {
       })
     }),
 
-    login: jest.fn((dto: LoginDto) => {
+    login: mock((dto: LoginDto) => {
       if (dto.email !== 'user@test.com') {
         return err('USER_NOT_FOUND')
       }
@@ -63,7 +63,7 @@ describe('AuthController', () => {
         password: 'testpassword123'
       }
 
-      await expect(controller.signup(dto))
+      expect(controller.signup(dto))
         .resolves
         .toEqual({
           id: expect.any(Number),
@@ -81,7 +81,7 @@ describe('AuthController', () => {
         password: 'testpassword123'
       }
 
-      await expect(controller.signup(dto))
+      expect(controller.signup(dto))
         .rejects
         .toThrow(ConflictException)
 
@@ -96,7 +96,7 @@ describe('AuthController', () => {
         password: 'testpassword123'
       }
 
-      await expect(controller.login(dto))
+      expect(controller.login(dto))
         .resolves
         .toEqual({
           accessToken: expect.any(String),
@@ -111,7 +111,7 @@ describe('AuthController', () => {
         password: 'testpassword123'
       }
 
-      await expect(controller.login(dto))
+      expect(controller.login(dto))
         .rejects
         .toThrow(UnauthorizedException)
 
@@ -124,7 +124,7 @@ describe('AuthController', () => {
         password: 'wrongpassword123'
       }
 
-      await expect(controller.login(dto))
+      expect(controller.login(dto))
         .rejects
         .toThrow(UnauthorizedException)
 
