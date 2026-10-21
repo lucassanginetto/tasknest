@@ -12,7 +12,7 @@ describe('AuthController (e2e)', () => {
 
   const mockPrismaService = {
     user: {
-      findUnique: jest.fn((_: any) => null),
+      findUnique: jest.fn((_args: any) => null),
       create: jest.fn((args: any) => {
         return {
           id: 1,
