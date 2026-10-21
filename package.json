@@ -19,8 +19,7 @@
     "test:cov": "bun test --coverage",
     "test:debug": "bun test --inspect-brk",
     "test:e2e": "bun test ./test/*",
-    "test:e2e:watch": "bun test ./test/* --watch",
-    "postinstall": "prisma skills sync || exit 0"
+    "test:e2e:watch": "bun test ./test/* --watch"
   },
   "dependencies": {
     "@fastify/static": "^10.1.5",
