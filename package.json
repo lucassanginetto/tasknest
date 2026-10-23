@@ -10,7 +10,7 @@
     "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "prisma generate && nest start",
-    "start:dev": "prisma generate && nest start --watch",
+    "dev": "prisma generate && nest start --watch --preserveWatchOutput",
     "start:debug": "prisma generate && nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "oxlint --type-aware src/ test/",
