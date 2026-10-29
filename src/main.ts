@@ -21,9 +21,9 @@ async function bootstrap() {
   )
 
   const config = new DocumentBuilder()
-    .setTitle('tasknest')
-    .setVersion('0.0.1')
-    .setDescription('Task Tracking API')
+    .setTitle(process.env.npm_package_name ?? '')
+    .setVersion(process.env.npm_package_version ?? '')
+    .setDescription(process.env.npm_package_description ?? '')
     .addBearerAuth()
     .build()
   const documentFactory = () => SwaggerModule.createDocument(app, config)
