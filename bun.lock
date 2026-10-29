@@ -23,6 +23,7 @@
         "neverthrow": "^8.2.0",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",
+        "tasknest-schemas": "lucassanginetto/tasknest-schemas",
         "zod": "^4.6.7",
       },
       "devDependencies": {
@@ -1655,6 +1656,8 @@
     "synckit": ["synckit@0.11.13", "", { "dependencies": { "@pkgr/core": "0.3.6" } }, "sha512-eNRKgb3z66Yp3D2CixVujOUvXLFUTij/zVnV8KRyvFdQwpz7I5DS8UfRkTeLzb64u+dkzDSdelE24izu+zSSUg=="],
 
     "tapable": ["tapable@2.3.3", "", {}, "sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A=="],
+
+    "tasknest-schemas": ["tasknest-schemas@github:lucassanginetto/tasknest-schemas#907008a", { "dependencies": { "zod": "^4.6.7" } }, "lucassanginetto-tasknest-schemas-907008a", "sha512-8tked3jxeJuXN9EM/R144r8bjJ8uwQouzX0V0AGm9Mj0JmAASK6X7DjTvBf0erDyeY1lDGW7GHcOq/1k1ubBzQ=="],
 
     "terser": ["terser@5.51.2", "", { "dependencies": { "@jridgewell/source-map": "0.3.11", "acorn": "8.18.0", "commander": "2.20.3", "source-map-support": "0.5.21" }, "bin": { "terser": "bin/terser" } }, "sha512-bWnjSNscmuI+GJze6ZupnHP8G/cTcsJF+bXCeQknk2SHQsgbNJnLrqiH9jZ2W4STPVXH2mDKKRX3iwPhc9Cn/Q=="],
 
