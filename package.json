@@ -40,9 +40,12 @@
     "neverthrow": "^8.2.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "tasknest-schemas": "lucassanginetto/tasknest-schemas",
+    "tasknest-schemas": "lucassanginetto/tasknest-schemas#8cd4e07",
     "zod": "^4.6.7"
   },
+  "trustedDependencies": [
+    "tasknest-schemas"
+  ],
   "devDependencies": {
     "@nestjs/cli": "^12.0.0",
     "@nestjs/mau": "^0.2.6",
